@@ -37,7 +37,7 @@
 <span class="target" id="module-stock"></span><dl class="class">
 <dt id="stock.Tickers">
 <em class="property">class </em><code class="descclassname">stock.</code><code class="descname">Tickers</code><a class="headerlink" href="#stock.Tickers" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a test docstring</p>
+<dd><p>Class used to save tickers to a file.</p>
 <dl class="method">
 <dt id="stock.Tickers.get_tickers_from_url">
 <code class="descname">get_tickers_from_url</code><span class="sig-paren">(</span><em>url</em>, <em>maximum</em>, <em>currentTickers</em><span class="sig-paren">)</span><a class="headerlink" href="#stock.Tickers.get_tickers_from_url" title="Permalink to this definition">¶</a></dt>
@@ -49,8 +49,8 @@ the maximum is reached or the page tickers are exhausted. The intent is to feed 
 function each successive page URL. Depends upon the PATTERN_SYMBOLS global variable.</p>
 <dl class="simple">
 <dt>Args:</dt><dd><p>url (str): URL to retrieve stock data from.
-maximum (int): The maximum number of tickers to retrieve. 0 &lt;= maximum &lt;= 150.
-currentTickers: The current amount of tickers already retrieved.</p>
+maximum (int): The maximum number of tickers to retrieve. 0 &lt;= maximum &lt;= 110.
+currentTickers(int): The current amount of tickers already retrieved.</p>
 </dd>
 <dt>Returns:</dt><dd><p>set: A set of tickers (str).</p>
 </dd>
@@ -85,6 +85,28 @@ for the first URL.</p>
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="stock.int_in_range">
+<code class="descclassname">stock.</code><code class="descname">int_in_range</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#stock.int_in_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Argument filter for an integer between 0 and 110.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>i (int): The integer to filter.</p>
+</dd>
+<dt>Returns:</dt><dd><p>(int) Returns the number as an integer if within range, throws an error otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="stock.parseInput">
+<code class="descclassname">stock.</code><code class="descname">parseInput</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stock.parseInput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parse arguments from standard input.</p>
+<dl class="simple">
+<dt>Returns:</dt><dd><p>Returns arguments object.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

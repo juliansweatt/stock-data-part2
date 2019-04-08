@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-
 import sys
 import requests
 import re
+import argparse
 from iex import Stock
 
 class Tickers:
-    """This is a test docstring"""
+    """Class used to save tickers to a file."""
 
     # Ticker Settings
-    NASDAQ_URL = "http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download"
-    OUTFILE = "tickers.txt"
-    PATTERN_SYMBOLS = re.compile(r'symbol/([a-z]*)')
-    PATTERN_NEXT_PAGE = re.compile(r'<a href="(.{90,105})" id="main_content_lb_NextPage"')
+    def __init__(self):
+        self.NASDAQ_URL = "http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download"
+        self.OUTFILE = "tickers.txt"
+        self.PATTERN_SYMBOLS = re.compile(r'symbol/([a-z]*)')
+        self.PATTERN_NEXT_PAGE = re.compile(r'<a href="(.{90,105})" id="main_content_lb_NextPage"')
 
     def print_to_file(self, outFile, tickerSet):
         """Prints a set to a file.
@@ -41,8 +42,8 @@ class Tickers:
 
             Args:
                 url (str): URL to retrieve stock data from.
-                maximum (int): The maximum number of tickers to retrieve. 0 <= maximum <= 150.
-                currentTickers: The current amount of tickers already retrieved.
+                maximum (int): The maximum number of tickers to retrieve. 0 <= maximum <= 110.
+                currentTickers(int): The current amount of tickers already retrieved.
 
             Returns:
                 set: A set of tickers (str).
@@ -99,7 +100,35 @@ class Tickers:
             if len(validTickers) < maximum:
                 print("Moving to Next Page", currentURL, "Valid Ticker(s) Found:", len(validTickers),)
 
+def int_in_range(i):
+    """Argument filter for an integer between 0 and 110.
+
+    Args:
+        i (int): The integer to filter.
+
+    Returns:
+        (int) Returns the number as an integer if within range, throws an error otherwise.
+    """
+    inti = int(i)
+    if inti < 0 or inti > 110:
+        raise argparse.ArgumentTypeError("0 < ticker_count <= 110 is not satisfied by %d" % i)
+    return inti
+
+def parseInput():
+    """Parse arguments from standard input.
+
+    Returns:
+        Returns arguments object.
+    """
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--operation", type=str, choices=("Ticker","Fetcher","Query"), help="Operation to perform.", required=True)
+    parser.add_argument("--ticker_count", type=int_in_range, help="Number of Tickers to Retrieve (0 < ticker_count <= 110)", required=(parser.parse_known_args()[0].operation in ("Ticker","Fetcher")))
+    return parser.parse_args()
+
 if __name__ == '__main__':
-    numTickers = int(sys.argv[1])
-    t = Tickers()
-    t.save_tickers(numTickers)
+    # Parse Input
+    args = parseInput()
+
+    # Execute Cooresponding Operation
+    if args.operation == "Ticker":
+        Tickers().save_tickers(args.ticker_count)
