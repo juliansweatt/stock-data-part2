@@ -18,11 +18,11 @@ sys.path.insert(0, os.path.abspath('.'))
 # -- Project information -----------------------------------------------------
 
 project = 'Stock Data Project 2'
-copyright = '2019, Julian Sweatt & Hannah Howard'
-author = 'Julian Sweatt & Hannah Howard'
+copyright = '2019, Julian Sweatt'
+author = 'Julian Sweatt'
 
 # The full version, including alpha/beta/rc tags
-release = '1'
+release = 'alpha'
 
 
 # -- General configuration ---------------------------------------------------
@@ -30,9 +30,7 @@ release = '1'
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.autodoc'
-]
+extensions = ['sphinx.ext.autodoc']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

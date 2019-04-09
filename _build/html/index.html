@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
-    <title>Welcome to Stock Data Project 2’s documentation! &#8212; Stock Data Project 2 1 documentation</title>
+    <title>Welcome to Stock Data Project 2’s documentation! &#8212; Stock Data Project 2 alpha documentation</title>
     <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -38,21 +38,34 @@
 <dt id="stock.Tickers">
 <em class="property">class </em><code class="descclassname">stock.</code><code class="descname">Tickers</code><a class="headerlink" href="#stock.Tickers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class used to save tickers to a file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>NASDAQ_URL</strong> (<em>str</em>) – The National Association of Securities Dealers Automated Quotations URL to be crawled to retrieve tickers. - Default <em>http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download</em></p></li>
+<li><p><strong>OUTFILE</strong> (<em>str</em>) – File path to write tickers to. - Default: <em>tickers.txt</em></p></li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="stock.Tickers.get_tickers_from_url">
 <code class="descname">get_tickers_from_url</code><span class="sig-paren">(</span><em>url</em>, <em>maximum</em>, <em>currentTickers</em><span class="sig-paren">)</span><a class="headerlink" href="#stock.Tickers.get_tickers_from_url" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gets stock tickers from a specified NASDAQ url.</p>
-<p>Function retrieves a maximum amount of tickers from a specified URL.
-A NASDAQ URL is expected. The maximum quantity takes in to account the current
-amount of tickers already found outside the function. The function will return whenever
-the maximum is reached or the page tickers are exhausted. The intent is to feed this 
-function each successive page URL. Depends upon the PATTERN_SYMBOLS global variable.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>url (str): URL to retrieve stock data from.
-maximum (int): The maximum number of tickers to retrieve. 0 &lt;= maximum &lt;= 110.
-currentTickers(int): The current amount of tickers already retrieved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Details</dt>
+<dd class="field-odd"><p>Function retrieves a maximum amount of tickers from a specified URL. A <em>NASDAQ URL</em> is expected. The maximum quantity takes in to account the current amount of tickers already found outside the function. The function will return whenever the maximum is reached or the page tickers are exhausted. The intent is to feed this function each successive page URL.</p>
 </dd>
-<dt>Returns:</dt><dd><p>set: A set of tickers (str).</p>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>url</strong> (<em>str</em>) – URL to retrieve stock data from.</p></li>
+<li><p><strong>maximum</strong> (<em>0 &lt;= int &lt;= 110</em>) – The maximum number of tickers to retrieve.</p></li>
+<li><p><strong>currentTickers</strong> (<em>int</em>) – The current amount of tickers already retrieved.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Retrieved tickers.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>set of str</p>
 </dd>
 </dl>
 </dd></dl>
@@ -61,11 +74,15 @@ currentTickers(int): The current amount of tickers already retrieved.</p>
 <dt id="stock.Tickers.print_to_file">
 <code class="descname">print_to_file</code><span class="sig-paren">(</span><em>outFile</em>, <em>tickerSet</em><span class="sig-paren">)</span><a class="headerlink" href="#stock.Tickers.print_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><p>Prints a set to a file.</p>
-<p>Prints a set to an output file, such that each element of the
-set is a new line of the file.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>outfile (str): The name/path of the output file.
-tickerSet (set): Set to print to the outfile</p>
+<dl class="field-list simple">
+<dt class="field-odd">Details</dt>
+<dd class="field-odd"><p>Prints a set to an output file, such that each element of the set is a new line of the file.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>outfile</strong> (<em>int</em>) – The name/path of the output file</p></li>
+<li><p><strong>tickerSet</strong> (<em>set</em>) – Set to print to the outfile</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -74,37 +91,28 @@ tickerSet (set): Set to print to the outfile</p>
 <dt id="stock.Tickers.save_tickers">
 <code class="descname">save_tickers</code><span class="sig-paren">(</span><em>maximum</em><span class="sig-paren">)</span><a class="headerlink" href="#stock.Tickers.save_tickers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Save a specified quantity of tickers to an output file.</p>
-<p>Saves a maximum number of tickers to an output file, such
-that each line in the output file is a ticker string.
-Depends upon the PATTERN_NEXT_PAGE global variable to set the
-pattern for finding the next page and the NASDAQ_URL global variable 
-for the first URL.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>maximum (int): The maximum number of tickers to retrieve from NASDAQ.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Details</dt>
+<dd class="field-odd"><p>Saves a maximum number of tickers to an output file, suchthat each line in the output file is a ticker string.</p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>maximum</strong> (<em>int</em>) – The maximum number of tickers to retrieve from NASDAQ.</p>
 </dd>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="function">
-<dt id="stock.int_in_range">
-<code class="descclassname">stock.</code><code class="descname">int_in_range</code><span class="sig-paren">(</span><em>i</em><span class="sig-paren">)</span><a class="headerlink" href="#stock.int_in_range" title="Permalink to this definition">¶</a></dt>
-<dd><p>Argument filter for an integer between 0 and 110.</p>
-<dl class="simple">
-<dt>Args:</dt><dd><p>i (int): The integer to filter.</p>
-</dd>
-<dt>Returns:</dt><dd><p>(int) Returns the number as an integer if within range, throws an error otherwise.</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="stock.parseInput">
 <code class="descclassname">stock.</code><code class="descname">parseInput</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stock.parseInput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse arguments from standard input.</p>
-<dl class="simple">
-<dt>Returns:</dt><dd><p>Returns arguments object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Parsed arguments.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>argparse.Namespace</p>
 </dd>
 </dl>
 </dd></dl>
@@ -167,7 +175,7 @@ for the first URL.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &copy;2019, Julian Sweatt & Hannah Howard.
+      &copy;2019, Julian Sweatt.
       
       |
       Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
