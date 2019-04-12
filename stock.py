@@ -3,6 +3,9 @@ import sys
 import requests
 import re
 import argparse
+import datetime
+import os
+import time
 from iex import Stock
 
 class Tickers:
@@ -58,7 +61,7 @@ class Tickers:
                 break
             try:
                 Stock(ticker).price()
-                validTickers.add(ticker)
+                validTickers.add(ticker.upper())
             except:
                 print("Invalid Ticker:", ticker)
 
@@ -88,6 +91,100 @@ class Tickers:
             # Announce Page Change
             if len(validTickers) < maximum:
                 print("Moving to Next Page", currentURL, "Valid Ticker(s) Found:", len(validTickers),)
+
+class Fetcher:
+    """...
+    """
+
+    # Ticker Settings
+    def __init__(self, tfile="tickers.txt", ifile="default_out.txt"):
+        # Do something
+        self.tickerFile = tfile
+        self.infoFile = ifile
+
+    def getTickers(self):
+        """Retrieve a set of tickers from a text file.
+
+            :Details: Retrieves a set of tickers from the tickerFile which is a text file such that each line of the text file is a new ticker represented as a string.
+            :return: Valid tickers.
+            :rtype: set
+        """
+        tickers = set()
+
+        try:
+            f = open(self.tickerFile, "r") # Bookmark
+            for line in f:
+                tickers.add(line[:-1])
+            f.close()
+        except:
+            print("Error While Accessing the Ticker File.") # @todo Make exception
+            return
+
+        return tickers
+
+    def makeTimeString(self, hour, minute):
+        """Makes a time string (HH:MM) from hour and minute.
+
+        :param int hour: The hour of the time.
+        :param int minute: The minute of the time.
+        :return: Time in the form HH:MM, substituting 0 as needed.
+        :rtype: str
+        """
+
+        timeString = str()
+        hourString = str()
+        minuteString = str()
+
+        if hour < 10:
+            hourString = "0" + str(hour)
+        else:
+            hourString = str(hour)
+
+        if minute < 10:
+            minuteString = "0" + str(minute)
+        else:
+            minuteString = str(minute)
+        
+        timeString = hourString + ":" + minuteString
+
+        return timeString
+
+    def fetch(self, timeLimit):
+        # Collect Stock Tickers
+        tickerSet = self.getTickers()
+
+        # Setup for Print File
+        exists = os.path.isfile(self.infoFile)
+        outfile = open(self.infoFile, "a")
+        if not exists:
+            # Initialize File if New
+            outfile.write("Time,Ticker,latestPrice,latestVolume,Close,Open,low,high\n")
+        outfile.flush()
+
+        # Timed Execution
+        endTime = time.time() + timeLimit
+        currentMinute = datetime.datetime.now().minute
+        firstPass = True
+        while time.time() < endTime:
+            if firstPass or (datetime.datetime.now().minute != currentMinute):
+                # 
+                if not exists and firstPass:
+                    print("Retrieving Stock Data")
+                    firstPass = False
+                else:
+                    print("Updating Stock Data at", datetime.datetime.now().time())
+
+                # Execute Update Here
+                for ticker in tickerSet:
+                    tickInfo = Stock(ticker).quote()
+                    tickStr = str(self.makeTimeString(datetime.datetime.now().hour, datetime.datetime.now().minute) + "," + ticker + "," + str(tickInfo["latestPrice"]) + ",")
+                    tickStr = tickStr + str(tickInfo["latestVolume"]) + "," + str(tickInfo["close"]) + "," + str(tickInfo["open"]) + ","
+                    tickStr = tickStr + str(tickInfo["low"]) + "," + str(tickInfo["high"]) + "\n"
+                    outfile.write(tickStr)
+                currentMinute = datetime.datetime.now().minute
+                outfile.flush()
+        print("Time Limit Has Expired at", datetime.datetime.now().time())
+        outfile.close()
 
 def __int_in_range__(i):
     """Argument filter for an integer between 0 and 110.
@@ -120,3 +217,5 @@ if __name__ == '__main__':
     # Execute Cooresponding Operation
     if args.operation == "Ticker":
         Tickers().save_tickers(args.ticker_count)
+    elif args.operation == "Fetcher":
+        Fetcher().fetch(60) #bookmark testing as class wihout DB

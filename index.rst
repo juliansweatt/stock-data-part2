@@ -13,7 +13,6 @@ Welcome to Stock Data Project 2's documentation!
 .. automodule:: stock
     :members:
 
-
 Indices and tables
 ==================
 

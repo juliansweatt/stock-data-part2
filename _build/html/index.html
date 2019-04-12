@@ -35,6 +35,49 @@
 <div class="toctree-wrapper compound">
 </div>
 <span class="target" id="module-stock"></span><dl class="class">
+<dt id="stock.Fetcher">
+<em class="property">class </em><code class="descclassname">stock.</code><code class="descname">Fetcher</code><span class="sig-paren">(</span><em>tfile='tickers.txt'</em>, <em>ifile='default_out.txt'</em><span class="sig-paren">)</span><a class="headerlink" href="#stock.Fetcher" title="Permalink to this definition">¶</a></dt>
+<dd><p>…</p>
+<dl class="method">
+<dt id="stock.Fetcher.getTickers">
+<code class="descname">getTickers</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#stock.Fetcher.getTickers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve a set of tickers from a text file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Details</dt>
+<dd class="field-odd"><p>Retrieves a set of tickers from the tickerFile which is a text file such that each line of the text file is a new ticker represented as a string.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Valid tickers.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>set</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="stock.Fetcher.makeTimeString">
+<code class="descname">makeTimeString</code><span class="sig-paren">(</span><em>hour</em>, <em>minute</em><span class="sig-paren">)</span><a class="headerlink" href="#stock.Fetcher.makeTimeString" title="Permalink to this definition">¶</a></dt>
+<dd><p>Makes a time string (HH:MM) from hour and minute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hour</strong> (<em>int</em>) – The hour of the time.</p></li>
+<li><p><strong>minute</strong> (<em>int</em>) – The minute of the time.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Time in the form HH:MM, substituting 0 as needed.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
 <dt id="stock.Tickers">
 <em class="property">class </em><code class="descclassname">stock.</code><code class="descname">Tickers</code><a class="headerlink" href="#stock.Tickers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class used to save tickers to a file.</p>
