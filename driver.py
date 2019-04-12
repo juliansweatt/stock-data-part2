@@ -33,6 +33,6 @@ if __name__ == '__main__':
 
     # Execute Cooresponding Operation
     if args.operation == "Ticker":
-        Tickers().save_tickers(args.ticker_count)
+        Tickers(args.ticker_count).save_tickers()
     elif args.operation == "Fetcher":
         Fetcher().fetch(60) #bookmark testing as class wihout DB

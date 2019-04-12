@@ -2,7 +2,6 @@
 import sys
 import requests
 import re
-import argparse
 import datetime
 import os
 import time
@@ -11,16 +10,38 @@ from iex import Stock
 class Tickers:
     """Class used to save tickers to a file.
 
-    :var str NASDAQ_URL: The National Association of Securities Dealers Automated Quotations URL to be crawled to retrieve tickers. - Default *http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download*
-    :var str OUTFILE: File path to write tickers to. - Default: *tickers.txt*
+    :var str nasdaq_url: The National Association of Securities Dealers Automated Quotations URL to be crawled to retrieve tickers. - Default *http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download*
+    :var str outfile: File path to write tickers to. - Default: *tickers.txt*
     """
 
     # Ticker Settings
-    def __init__(self):
-        self.NASDAQ_URL = "http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download"
-        self.OUTFILE = "tickers.txt"
-        self._PATTERN_SYMBOLS_ = re.compile(r'symbol/([a-z]*)')
-        self._PATTERN_NEXT_PAGE_ = re.compile(r'<a href="(.{90,105})" id="main_content_lb_NextPage"')
+    def __init__(self, max_tickers):
+        """Construct a ticker object.
+
+            :param max_tickers: The maximum number of tickers to retrieve.
+            :type max_tickers: 0 <= int <= 110
+        """
+        self.__NASDAQ_URL = "http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download"
+        self.__OUTFILE = "tickers.txt"
+        self.__PATTERN_SYMBOLS = re.compile(r'symbol/([a-z]*)')
+        self.__PATTERN_NEXT_PAGE = re.compile(r'<a href="(.{90,105})" id="main_content_lb_NextPage"')
+        self.maximum = max_tickers
+
+    @property
+    def outfile(self):
+        return self.__OUTFILE
+
+    @outfile.setter
+    def outfile(self,of):
+        self.__OUTFILE = of
+
+    @property
+    def nasdaq_url(self):
+        return self.__NASDAQ_URL
+
+    @nasdaq_url.setter
+    def nasdaq_url(self,url):
+        self.__NASDAQ_URL = url
 
     def print_to_file(self, outFile, tickerSet):
         """Prints a set to a file.
@@ -35,13 +56,11 @@ class Tickers:
             f.write(ticker + "\n")
         f.close()
 
-    def get_tickers_from_url(self, url, maximum, currentTickers):
+    def get_tickers_from_url(self, url, currentTickers):
         """Gets stock tickers from a specified NASDAQ url.
 
             :Details: Function retrieves a maximum amount of tickers from a specified URL. A *NASDAQ URL* is expected. The maximum quantity takes in to account the current amount of tickers already found outside the function. The function will return whenever the maximum is reached or the page tickers are exhausted. The intent is to feed this function each successive page URL.
             :param str url: URL to retrieve stock data from.
-            :param maximum: The maximum number of tickers to retrieve.
-            :type maximum: 0 <= int <= 110
             :param int currentTickers: The current amount of tickers already retrieved.
             :return: Retrieved tickers.
             :rtype: set of str
@@ -51,12 +70,12 @@ class Tickers:
         response = requests.get(url)
 
         # Harvest Tickers
-        tickers = set(re.findall(self._PATTERN_SYMBOLS_, response.text))
+        tickers = set(re.findall(self.__PATTERN_SYMBOLS, response.text))
 
         # Check Tickers for Validity & Limit
         validTickers = set()
         for ticker in tickers:
-            if len(validTickers)+currentTickers >= maximum:
+            if len(validTickers)+currentTickers >= self.maximum:
                 print(len(validTickers)+currentTickers,"Valid Ticker(s) Found. User Specified Limit Reached.")
                 break
             try:
@@ -67,29 +86,28 @@ class Tickers:
 
         return validTickers
 
-    def save_tickers(self, maximum):
+    def save_tickers(self):
         """Save a specified quantity of tickers to an output file.
 
         :Details: Saves a maximum number of tickers to an output file, suchthat each line in the output file is a ticker string.
-        :param int maximum: The maximum number of tickers to retrieve from NASDAQ.
         """
         # Initialize
         validTickers = set()
-        currentURL = self.NASDAQ_URL
+        currentURL = self.__NASDAQ_URL
 
-        while len(validTickers) < maximum:
+        while len(validTickers) < self.maximum:
             # Collect Tickers
-            validTickers.update(self.get_tickers_from_url(currentURL,maximum,len(validTickers)))
+            validTickers.update(self.get_tickers_from_url(currentURL,len(validTickers)))
 
             # Collect New Page URL
             response = requests.get(currentURL)
-            currentURL = re.findall(self._PATTERN_NEXT_PAGE_,response.text)[0]
+            currentURL = re.findall(self.__PATTERN_NEXT_PAGE,response.text)[0]
 
             # Print Valid Ticker Set to Output File
-            self.print_to_file(self.OUTFILE, validTickers)
+            self.print_to_file(self.__OUTFILE, validTickers)
 
             # Announce Page Change
-            if len(validTickers) < maximum:
+            if len(validTickers) < self.maximum:
                 print("Moving to Next Page", currentURL, "Valid Ticker(s) Found:", len(validTickers),)
 
 class Fetcher:
