@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+import argparse
+from stock import Tickers
+from stock import Fetcher
+
 def __int_in_range__(i):
     """Argument filter for an integer between 0 and 110.
 
