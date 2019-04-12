@@ -1,2 +1,6 @@
 
 *.txt
+*.db
+__pycache__
+_build
+_static
