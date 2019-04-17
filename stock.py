@@ -5,13 +5,14 @@ import re
 import datetime
 import os
 import time
+import sqlite3
 from iex import Stock
 
 class Tickers:
     """Class used to save tickers to a file.
 
-    :var str nasdaq_url: The National Association of Securities Dealers Automated Quotations URL to be crawled to retrieve tickers. - Default *http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download*
-    :var str outfile: File path to write tickers to. - Default: *tickers.txt*
+        :var str nasdaq_url: The National Association of Securities Dealers Automated Quotations URL to be crawled to retrieve tickers. - Default *http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download*
+        :var str outfile: File path to write tickers to. - Default: *tickers.txt*
     """
 
     # Ticker Settings
@@ -89,7 +90,7 @@ class Tickers:
     def save_tickers(self):
         """Save a specified quantity of tickers to an output file.
 
-        :Details: Saves a maximum number of tickers to an output file, suchthat each line in the output file is a ticker string.
+            :Details: Saves a maximum number of tickers to an output file, suchthat each line in the output file is a ticker string.
         """
         # Initialize
         validTickers = set()
@@ -111,14 +112,17 @@ class Tickers:
                 print("Moving to Next Page", currentURL, "Valid Ticker(s) Found:", len(validTickers),)
 
 class Fetcher:
-    """...
+    """Class used to periodically fetch stock information from a list of known tickers.
+
+        :var str tickerFile: File path to read tickers from. - Default: *tickers.txt*
+        :var str outfile: Output database file.
     """
 
     # Ticker Settings
-    def __init__(self, tfile="tickers.txt", ifile="default_out.txt"):
+    def __init__(self, outfile="stocks_new.db"):
         # Do something
-        self.tickerFile = tfile
-        self.infoFile = ifile
+        self.tickerFile ="tickers.txt"
+        self.outfile = outfile
 
     def getTickers(self):
         """Retrieve a set of tickers from a text file.
@@ -130,12 +134,12 @@ class Fetcher:
         tickers = set()
 
         try:
-            f = open(self.tickerFile, "r") # Bookmark
+            f = open(self.tickerFile, "r")
             for line in f:
                 tickers.add(line[:-1])
             f.close()
         except:
-            print("Error While Accessing the Ticker File.") # @todo Make exception
+            print("Error While Accessing the Ticker File.")
             return
 
         return tickers
@@ -143,10 +147,10 @@ class Fetcher:
     def makeTimeString(self, hour, minute):
         """Makes a time string (HH:MM) from hour and minute.
 
-        :param int hour: The hour of the time.
-        :param int minute: The minute of the time.
-        :return: Time in the form HH:MM, substituting 0 as needed.
-        :rtype: str
+            :param int hour: The hour of the time.
+            :param int minute: The minute of the time.
+            :return: Time in the form HH:MM, substituting 0 as needed.
+            :rtype: str
         """
 
         timeString = str()
@@ -168,16 +172,18 @@ class Fetcher:
         return timeString
 
     def fetch(self, timeLimit):
+        """Fetch tickers from the tickerFile every minute for a set period of time.
+
+            :param int timeLimit: The set period of time to fetch tickers for (in seconds).
+        """
         # Collect Stock Tickers
         tickerSet = self.getTickers()
 
         # Setup for Print File
-        exists = os.path.isfile(self.infoFile)
-        outfile = open(self.infoFile, "a")
-        if not exists:
-            # Initialize File if New
-            outfile.write("Time,Ticker,latestPrice,latestVolume,Close,Open,low,high\n")
-        outfile.flush()
+        dbConnection = sqlite3.connect(self.outfile)
+        dbCursor = dbConnection.cursor()
+        dbCursor.execute('''CREATE TABLE IF NOT EXISTS stocks
+            (Time text, Ticker text, latestPrice real, latestVolume long, Close real, Open real, low real, high real)''')
 
         # Timed Execution
         endTime = time.time() + timeLimit
@@ -186,7 +192,7 @@ class Fetcher:
         while time.time() < endTime:
             if firstPass or (datetime.datetime.now().minute != currentMinute):
                 # 
-                if not exists and firstPass:
+                if firstPass:
                     print("Retrieving Stock Data")
                     firstPass = False
                 else:
@@ -195,11 +201,11 @@ class Fetcher:
                 # Execute Update Here
                 for ticker in tickerSet:
                     tickInfo = Stock(ticker).quote()
-                    tickStr = str(self.makeTimeString(datetime.datetime.now().hour, datetime.datetime.now().minute) + "," + ticker + "," + str(tickInfo["latestPrice"]) + ",")
+                    tickStr = "\'" + str(self.makeTimeString(datetime.datetime.now().hour, datetime.datetime.now().minute) + "\'" + "," + "\'" + ticker + "\'" + "," + str(tickInfo["latestPrice"]) + ",")
                     tickStr = tickStr + str(tickInfo["latestVolume"]) + "," + str(tickInfo["close"]) + "," + str(tickInfo["open"]) + ","
                     tickStr = tickStr + str(tickInfo["low"]) + "," + str(tickInfo["high"]) + "\n"
-                    outfile.write(tickStr)
+                    dbCursor.execute("INSERT INTO stocks VALUES(" + tickStr + ")")
                 currentMinute = datetime.datetime.now().minute
-                outfile.flush()
+                dbConnection.commit()
         print("Time Limit Has Expired at", datetime.datetime.now().time())
-        outfile.close()
+        dbConnection.close()

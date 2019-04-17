@@ -25,6 +25,8 @@ def parseInput():
     parser = argparse.ArgumentParser()
     parser.add_argument("--operation", type=str, choices=("Ticker","Fetcher","Query"), help="Operation to perform.", required=True)
     parser.add_argument("--ticker_count", type=__int_in_range__, help="Number of Tickers to Retrieve (0 < ticker_count <= 110)", required=(parser.parse_known_args()[0].operation in ("Ticker","Fetcher")))
+    parser.add_argument("--time_limit", type=int, help="...", required=(parser.parse_known_args()[0].operation == "Fetcher"))
+    parser.add_argument("--db", type=str, help="...", required=(parser.parse_known_args()[0].operation in ("Query","Fetcher")))
     return parser.parse_args()
 
 if __name__ == '__main__':
@@ -35,4 +37,6 @@ if __name__ == '__main__':
     if args.operation == "Ticker":
         Tickers(args.ticker_count).save_tickers()
     elif args.operation == "Fetcher":
-        Fetcher().fetch(60) #bookmark testing as class wihout DB
+        Fetcher(args.db).fetch(args.time_limit)
+    elif args.operation == "Query":
+        #
