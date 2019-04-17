@@ -11,16 +11,16 @@ from iex import Stock
 class Tickers:
     """Class used to save tickers to a file.
 
-        :var str nasdaq_url: The National Association of Securities Dealers Automated Quotations URL to be crawled to retrieve tickers. - Default *http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download*
-        :var str outfile: File path to write tickers to. - Default: *tickers.txt*
+    :var str nasdaq_url: The National Association of Securities Dealers Automated Quotations URL to be crawled to retrieve tickers. - Default *http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download*
+    :var str outfile: File path to write tickers to. - Default: *tickers.txt*
     """
 
     # Ticker Settings
     def __init__(self, max_tickers):
         """Construct a ticker object.
 
-            :param max_tickers: The maximum number of tickers to retrieve.
-            :type max_tickers: 0 <= int <= 110
+        :param max_tickers: The maximum number of tickers to retrieve.
+        :type max_tickers: 0 <= int <= 110
         """
         self.__NASDAQ_URL = "http://www.nasdaq.com/screening/companies-by-industry.aspx?exchange=NASDAQrender=download"
         self.__OUTFILE = "tickers.txt"
@@ -47,9 +47,9 @@ class Tickers:
     def print_to_file(self, outFile, tickerSet):
         """Prints a set to a file.
 
-            :Details: Prints a set to an output file, such that each element of the set is a new line of the file.
-            :param int outfile: The name/path of the output file
-            :param set tickerSet: Set to print to the outfile
+        :Details: Prints a set to an output file, such that each element of the set is a new line of the file.
+        :param int outfile: The name/path of the output file
+        :param set tickerSet: Set to print to the outfile
         """
 
         f = open(outFile, "w")
@@ -60,11 +60,11 @@ class Tickers:
     def get_tickers_from_url(self, url, currentTickers):
         """Gets stock tickers from a specified NASDAQ url.
 
-            :Details: Function retrieves a maximum amount of tickers from a specified URL. A *NASDAQ URL* is expected. The maximum quantity takes in to account the current amount of tickers already found outside the function. The function will return whenever the maximum is reached or the page tickers are exhausted. The intent is to feed this function each successive page URL.
-            :param str url: URL to retrieve stock data from.
-            :param int currentTickers: The current amount of tickers already retrieved.
-            :return: Retrieved tickers.
-            :rtype: set of str
+        :Details: Function retrieves a maximum amount of tickers from a specified URL. A *NASDAQ URL* is expected. The maximum quantity takes in to account the current amount of tickers already found outside the function. The function will return whenever the maximum is reached or the page tickers are exhausted. The intent is to feed this function each successive page URL.
+        :param str url: URL to retrieve stock data from.
+        :param int currentTickers: The current amount of tickers already retrieved.
+        :return: Retrieved tickers.
+        :rtype: set of str
         """
 
         # Get Initial Web Page
@@ -90,7 +90,7 @@ class Tickers:
     def save_tickers(self):
         """Save a specified quantity of tickers to an output file.
 
-            :Details: Saves a maximum number of tickers to an output file, suchthat each line in the output file is a ticker string.
+        :Details: Saves a maximum number of tickers to an output file, suchthat each line in the output file is a ticker string.
         """
         # Initialize
         validTickers = set()
@@ -114,8 +114,8 @@ class Tickers:
 class Fetcher:
     """Class used to periodically fetch stock information from a list of known tickers.
 
-        :var str tickerFile: File path to read tickers from. - Default: *tickers.txt*
-        :var str outfile: Output database file.
+    :var str tickerFile: File path to read tickers from. - Default: *tickers.txt*
+    :var str outfile: Output database file.
     """
 
     # Ticker Settings
@@ -127,9 +127,9 @@ class Fetcher:
     def getTickers(self):
         """Retrieve a set of tickers from a text file.
 
-            :Details: Retrieves a set of tickers from the tickerFile which is a text file such that each line of the text file is a new ticker represented as a string.
-            :return: Valid tickers.
-            :rtype: set
+        :Details: Retrieves a set of tickers from the tickerFile which is a text file such that each line of the text file is a new ticker represented as a string.
+        :return: Valid tickers.
+        :rtype: set
         """
         tickers = set()
 
@@ -147,10 +147,10 @@ class Fetcher:
     def makeTimeString(self, hour, minute):
         """Makes a time string (HH:MM) from hour and minute.
 
-            :param int hour: The hour of the time.
-            :param int minute: The minute of the time.
-            :return: Time in the form HH:MM, substituting 0 as needed.
-            :rtype: str
+        :param int hour: The hour of the time.
+        :param int minute: The minute of the time.
+        :return: Time in the form HH:MM, substituting 0 as needed.
+        :rtype: str
         """
 
         timeString = str()
@@ -174,7 +174,7 @@ class Fetcher:
     def fetch(self, timeLimit):
         """Fetch tickers from the tickerFile every minute for a set period of time.
 
-            :param int timeLimit: The set period of time to fetch tickers for (in seconds).
+        :param int timeLimit: The set period of time to fetch tickers for (in seconds).
         """
         # Collect Stock Tickers
         tickerSet = self.getTickers()
