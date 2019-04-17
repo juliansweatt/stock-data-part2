@@ -3,6 +3,7 @@ import argparse
 import re
 from stock import Tickers
 from stock import Fetcher
+from stock import Query
 
 def __valid_time(s):
     """Argument filter for a string with a valid time of format HH:MM
@@ -56,5 +57,4 @@ if __name__ == '__main__':
     elif args.operation == "Fetcher":
         Fetcher(args.db).fetch(args.time_limit)
     elif args.operation == "Query":
-        #python3 driver.py --operation=Query --time=15:11 --db="stocks_new.db" --ticker=’YI’
-        print("Query Yay")
+        Query(args.time, args.db, args.ticker).fetch_and_print()

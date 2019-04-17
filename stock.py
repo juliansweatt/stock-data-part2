@@ -15,7 +15,6 @@ class Tickers:
     :var str outfile: File path to write tickers to. - Default: *tickers.txt*
     """
 
-    # Ticker Settings
     def __init__(self, max_tickers):
         """Construct a ticker object.
 
@@ -118,9 +117,7 @@ class Fetcher:
     :var str outfile: Output database file.
     """
 
-    # Ticker Settings
     def __init__(self, outfile="stocks_new.db"):
-        # Do something
         self.tickerFile ="tickers.txt"
         self.outfile = outfile
 
@@ -183,7 +180,7 @@ class Fetcher:
         dbConnection = sqlite3.connect(self.outfile)
         dbCursor = dbConnection.cursor()
         dbCursor.execute('''CREATE TABLE IF NOT EXISTS stocks
-            (Time text, Ticker text, latestPrice real, latestVolume long, Close real, Open real, low real, high real)''')
+            (Time text, Ticker text, Low real, High real, Open real, Close real, Volume long, Price real)''')
 
         # Timed Execution
         endTime = time.time() + timeLimit
@@ -191,14 +188,13 @@ class Fetcher:
         firstPass = True
         while time.time() < endTime:
             if firstPass or (datetime.datetime.now().minute != currentMinute):
-                # 
                 if firstPass:
                     print("Retrieving Stock Data")
                     firstPass = False
                 else:
                     print("Updating Stock Data at", datetime.datetime.now().time())
 
-                # Execute Update Here
+                # Execute Update
                 for ticker in tickerSet:
                     tickInfo = Stock(ticker).quote()
                     tickStr = "\'" + str(self.makeTimeString(datetime.datetime.now().hour, datetime.datetime.now().minute) + "\'" + "," + "\'" + ticker + "\'" + "," + str(tickInfo["latestPrice"]) + ",")
@@ -209,3 +205,32 @@ class Fetcher:
                 dbConnection.commit()
         print("Time Limit Has Expired at", datetime.datetime.now().time())
         dbConnection.close()
+
+class Query:
+    def __init__(self, time, db, ticker):
+        self.time = time
+        self.db = db
+        self.ticker = ticker
+
+    def fetch(self):
+        dbConnection = sqlite3.connect(self.db)
+        dbCursor = dbConnection.cursor()
+        dbCursor.execute("SELECT * FROM stocks WHERE Ticker=\'"+ self.ticker +"\' AND Time=\'" + self.time + "\'")
+        fetch_result = dbCursor.fetchall()
+        dbConnection.close()
+        return fetch_result
+    
+    def fetch_and_print(self):
+        fetch_result = self.fetch()
+        if fetch_result:
+            fetch_result = fetch_result[0]
+            print("Time:",fetch_result[0])
+            print("Ticker:",fetch_result[1])
+            print("Latest Price:",fetch_result[2])
+            print("Latest Volume:",fetch_result[3])
+            print("Close:",fetch_result[4])
+            print("Open:",fetch_result[5])
+            print("Low:",fetch_result[6])
+            print("High:",fetch_result[7])
+        else:
+            print("No Query Results Found.")
