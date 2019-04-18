@@ -183,14 +183,14 @@ class Fetcher:
         # Setup for Print File
         dbConnection = sqlite3.connect(self.outfile)
         dbCursor = dbConnection.cursor()
-        dbCursor.execute('''CREATE TABLE IF NOT EXISTS stocks
+        dbCursor.execute('''CREATE TABLE IF NOT EXISTS StockData
             (Time text, Ticker text, Low real, High real, Open real, Close real, Volume long, Price real)''')
 
         # Timed Execution
         endTime = time.time() + timeLimit
         currentMinute = datetime.datetime.now().minute
         firstPass = True
-        insert_sql = ''' INSERT INTO stocks(Time, Ticker, Low, High, Open, Close, Volume, Price)
+        insert_sql = ''' INSERT INTO StockData(Time, Ticker, Low, High, Open, Close, Volume, Price)
                             VALUES(?,?,?,?,?,?,?,?) '''
         while time.time() < endTime:
             if firstPass or (datetime.datetime.now().minute != currentMinute):
@@ -231,7 +231,7 @@ class Query:
         """
         dbConnection = sqlite3.connect(self.db)
         dbCursor = dbConnection.cursor()
-        dbCursor.execute("SELECT * FROM stocks WHERE Ticker=\'"+ self.ticker +"\' AND Time=\'" + self.time + "\'")
+        dbCursor.execute("SELECT * FROM StockData WHERE Ticker=\'"+ self.ticker +"\' AND Time=\'" + self.time + "\'")
         fetch_result = dbCursor.fetchall()
         dbConnection.close()
         return fetch_result
