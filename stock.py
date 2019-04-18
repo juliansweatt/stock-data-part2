@@ -118,6 +118,10 @@ class Fetcher:
     """
 
     def __init__(self, outfile="stocks_new.db"):
+        """Construct a fetcher object.
+
+        :param str outfile: The name/path of the database file to save fetch information to.
+        """
         self.tickerFile ="tickers.txt"
         self.outfile = outfile
 
@@ -186,6 +190,8 @@ class Fetcher:
         endTime = time.time() + timeLimit
         currentMinute = datetime.datetime.now().minute
         firstPass = True
+        insert_sql = ''' INSERT INTO stocks(Time, Ticker, Low, High, Open, Close, Volume, Price)
+                            VALUES(?,?,?,?,?,?,?,?) '''
         while time.time() < endTime:
             if firstPass or (datetime.datetime.now().minute != currentMinute):
                 if firstPass:
@@ -193,26 +199,36 @@ class Fetcher:
                     firstPass = False
                 else:
                     print("Updating Stock Data at", datetime.datetime.now().time())
-
                 # Execute Update
                 for ticker in tickerSet:
                     tickInfo = Stock(ticker).quote()
-                    tickStr = "\'" + str(self.makeTimeString(datetime.datetime.now().hour, datetime.datetime.now().minute) + "\'" + "," + "\'" + ticker + "\'" + "," + str(tickInfo["latestPrice"]) + ",")
-                    tickStr = tickStr + str(tickInfo["latestVolume"]) + "," + str(tickInfo["close"]) + "," + str(tickInfo["open"]) + ","
-                    tickStr = tickStr + str(tickInfo["low"]) + "," + str(tickInfo["high"]) + "\n"
-                    dbCursor.execute("INSERT INTO stocks VALUES(" + tickStr + ")")
+                    inject_load = (self.makeTimeString(datetime.datetime.now().hour, datetime.datetime.now().minute),ticker,tickInfo["low"],tickInfo["high"],tickInfo["open"],tickInfo["close"],tickInfo["latestVolume"],tickInfo["latestPrice"])
+                    dbCursor.execute(insert_sql, inject_load)
                 currentMinute = datetime.datetime.now().minute
                 dbConnection.commit()
         print("Time Limit Has Expired at", datetime.datetime.now().time())
         dbConnection.close()
 
 class Query:
+    """Class used to query a database of stock information.
+    """
     def __init__(self, time, db, ticker):
+        """Construct a query object.
+
+        :param str time: The time to query in HH:MM format.
+        :param str db: The name/path of the database file being queried.
+        :param str ticker: The ticker (uppercase) to query.
+        """
         self.time = time
         self.db = db
         self.ticker = ticker
 
     def fetch(self):
+        """Fetch the query target.
+
+        :return: Fetched database row
+        :rtype: array
+        """
         dbConnection = sqlite3.connect(self.db)
         dbCursor = dbConnection.cursor()
         dbCursor.execute("SELECT * FROM stocks WHERE Ticker=\'"+ self.ticker +"\' AND Time=\'" + self.time + "\'")
@@ -221,6 +237,8 @@ class Query:
         return fetch_result
     
     def fetch_and_print(self):
+        """Print the result of a fetch, if any.
+        """
         fetch_result = self.fetch()
         if fetch_result:
             fetch_result = fetch_result[0]
