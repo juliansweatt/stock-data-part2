@@ -55,6 +55,6 @@ if __name__ == '__main__':
     if args.operation == "Ticker":
         Tickers(args.ticker_count).save_tickers()
     elif args.operation == "Fetcher":
-        Fetcher(args.db).fetch(args.time_limit)
+        Fetcher(args.db).fetch_all_data(args.time_limit)
     elif args.operation == "Query":
         Query(args.time, args.db, args.ticker).fetch_and_print()

@@ -172,7 +172,7 @@ class Fetcher:
 
         return timeString
 
-    def fetch(self, timeLimit):
+    def fetch_all_data(self, timeLimit):
         """Fetch tickers from the tickerFile every minute for a set period of time.
 
         :param int timeLimit: The set period of time to fetch tickers for (in seconds).
