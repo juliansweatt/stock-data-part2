@@ -13,3 +13,15 @@ def test_save_tickers():
     ticker.outfile = test_outfile
     ticker.save_tickers()
     assert len(open(test_outfile).readlines()) <= test_max
+
+def test_save_tickers_long():
+    test_max = 100
+    test_outfile = "test_tickers_2.txt"
+    ticker = Tickers(test_max)
+    ticker.outfile = test_outfile
+    ticker.save_tickers()
+    assert len(open(test_outfile).readlines()) <= test_max
+
+def test_cleanup():
+    os.remove("test_tickers.txt")
+    os.remove("test_tickers_2.txt")
